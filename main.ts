@@ -1,19 +1,29 @@
-const selection = figma.currentPage.selection[0]
+const selection = figma.currentPage.selection
 
-var message: String
+var message
 
-if (selection.type == "COMPONENT") {
-  const componentId = selection.id
-  const instancesCount = figma.root.findAll((node) => node.type == "INSTANCE" && node.masterComponent.id == componentId).length
-  const hasInstances = instancesCount > 0
-  if (!hasInstances) {
-    selection.remove()
-    message = `${selection.name} removed`
+if (selection.length == 1) {
+  const selectedNode = selection[0]
+  if (selectedNode != undefined && selectedNode.type == "COMPONENT" && !selectedNode.removed) {
+    if (!selectedNode.remote) {
+      const name = selectedNode.name
+      const componentId = selectedNode.id
+      const instancesCount = figma.root.findAll((node) => node.type == "INSTANCE" && node.masterComponent.id == componentId).length
+      const hasInstances = instancesCount > 0
+      if (!hasInstances) {
+        selectedNode.remove()
+        message = `${name} removed`
+      } else {
+        message = `${name} has ${instancesCount} instances and won't be removed`
+      }
+    } else {
+      message = `${name} is read-only`
+    }
   } else {
-    message = `${selection.name} has ${instancesCount} instances and won't be removed`
+    message = selectedNode ? `${name} is not a component` : "No component selected"
   }
 } else {
-  message = `${selection.name} is not a component`
+  message = "Select 1 object"
 }
 
 figma.closePlugin(message);
