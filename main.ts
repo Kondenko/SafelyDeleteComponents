@@ -11,7 +11,7 @@ function isInstance(node, componentId) {
   }
 }
 
-function removeComponent(component): string {
+function removeComponent(component) {
   if (component != undefined && component.type == "COMPONENT" && !component.removed) {
     const name = component.name
     if (!component.remote) {
