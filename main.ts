@@ -12,31 +12,38 @@ function isInstance(node, componentId) {
 }
 
 function removeComponent(component) {
+  const messageTextPadding = "    "
   if (component != undefined && component.type == "COMPONENT" && !component.removed) {
     const name = component.name
     if (!component.remote) {
       const componentId = component.id
-      const instances = figma.root.findOne(node => isInstance(node, componentId))
-      const hasInstances = instances != null
+      const hasInstances = figma.root.findOne(node => isInstance(node, componentId)) != null
       if (!hasInstances) {
         component.remove()
-        return `${name} removed`
+        return `🗑${messageTextPadding}${name} removed`
       } else {
-        return `${name} has instances and won't be removed`
+        return `🔒${messageTextPadding}${name} has instances and won't be removed`
       }
     } else {
-      return `${name} is read-only`
+      return `🚫${messageTextPadding}${name} is read-only`
     }
   } else {
-    return component ? `${component.name} is not a component` : "No component selected"
+    return component ? `❓${messageTextPadding}${component.name} is not a component` : "No component selected"
   }
 }
 
-// TODO Allow selecting multiple components
-if (selection.length == 1) {
-  const selectedNode = selection[0]
-  console.log(selectedNode)
-  figma.closePlugin(removeComponent(selectedNode))
+const messages = selection.map(node => removeComponent(node))
+
+if (messages.length < 4) {
+  messages.forEach(m => figma.notify(m))
+  figma.closePlugin()
 } else {
-  figma.closePlugin(`Select 1 object (${selection.length} selected)`)
+  const text = messages.join("\n\n")
+  const style =
+  `
+  white-space:pre-wrap; 
+  padding: 0 8px;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  `
+  figma.showUI(`<p style="${style}">${text}</p>`, { width: 500, height: 200 })
 }
