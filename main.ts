@@ -1,21 +1,25 @@
-const selection = figma.currentPage.selection
+const selection: readonly SceneNode[] = figma.currentPage.selection
 
-const priorityDeleted = 1
+const deletedComponentPriority = 1
 
 interface DeleteOperation {
   message: string
   priority: number
 }
 
-function isInstance(node: SceneNode, componentId: String) {
+function isInstance(instance: SceneNode, component: SceneNode): boolean {
   try {
-    return node && node.type == "INSTANCE" && node.masterComponent.id == componentId
+    return instance && instance.type == "INSTANCE" && instance.masterComponent.id == component.id
   } catch (e) {
-    console.log("Error traversing the document")
-    console.log(node)
+    console.log("Error checking an instance:")
+    console.log(instance)
     console.log(e)
     return false
   }
+}
+
+function hasInstances(component: ComponentNode): boolean {
+  return figma.root.findOne((node: SceneNode) => isInstance(node, component)) != null
 }
 
 function removeComponent(component: SceneNode): DeleteOperation {
@@ -23,13 +27,11 @@ function removeComponent(component: SceneNode): DeleteOperation {
   if (component != undefined && component.type == "COMPONENT" && !component.removed) {
     const name: string = component.name
     if (!component.remote) {
-      const componentId = component.id
-      const hasInstances = figma.root.findOne(node => isInstance(node, componentId)) != null
-      if (!hasInstances) {
+      if (!hasInstances(component)) {
         component.remove()
         return { 
           message: `🗑${messageTextPadding}${name} deleted`,
-          priority: 1 
+          priority: deletedComponentPriority
         }
       } else {
         return { 
@@ -51,10 +53,15 @@ function removeComponent(component: SceneNode): DeleteOperation {
   }
 }
 
+/* Main logic */
 
-const messages: Array<DeleteOperation> = selection.map(node => removeComponent(node)).sort((x, y) => x.priority - y.priority)
+const messages: Array<DeleteOperation> = selection
+    .map((node) => removeComponent(node))
+    .sort((x, y) => x.priority - y.priority)
 
-if (messages.find(res => res.priority == priorityDeleted) == undefined) {
+if (messages.length == 0) {
+  figma.closePlugin("Nothing selected")
+} else if (messages.length > 1 && messages.find(res => res.priority == deletedComponentPriority) == undefined) {
   figma.closePlugin("Nothing to delete")
 } else if (messages.length < 4) {
   Object.values(messages).forEach(res => figma.notify(res.message))
