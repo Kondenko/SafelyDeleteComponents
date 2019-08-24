@@ -1,6 +1,10 @@
 {
-  "name": "Safely delete component",
+  "name": "Safely Delete Components",
   "id": "746849770992339499",
   "main": "main.js",
-  "api": "1.0.0"
+  "api": "1.0.0",
+  "menu": [
+    { "name": "Safe Delete", "command": "safeDeleteSelection" },
+    { "name": "Delete Unused Components", "command": "deleteUnusedComponents" }
+  ]
 }
