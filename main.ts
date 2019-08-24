@@ -11,7 +11,7 @@ function isInstance(node, componentId) {
   }
 }
 
-function removeComponent(component) {
+function removeComponent(component): string {
   if (component != undefined && component.type == "COMPONENT" && !component.removed) {
     const name = component.name
     if (!component.remote) {
@@ -20,15 +20,15 @@ function removeComponent(component) {
       const hasInstances = instances != null
       if (!hasInstances) {
         component.remove()
-        figma.closePlugin(`${name} removed`)
+        return `${name} removed`
       } else {
-        figma.closePlugin(`${name} has instances and won't be removed`)
+        return `${name} has instances and won't be removed`
       }
     } else {
-      figma.closePlugin(`${name} is read-only`)
+      return `${name} is read-only`
     }
   } else {
-    figma.closePlugin(component ? `${component.name} is not a component` : "No component selected")
+    return component ? `${component.name} is not a component` : "No component selected"
   }
 }
 
@@ -36,7 +36,7 @@ function removeComponent(component) {
 if (selection.length == 1) {
   const selectedNode = selection[0]
   console.log(selectedNode)
-  removeComponent(selectedNode)
+  figma.closePlugin(removeComponent(selectedNode))
 } else {
   figma.closePlugin(`Select 1 object (${selection.length} selected)`)
 }
