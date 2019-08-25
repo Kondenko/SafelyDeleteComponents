@@ -1,4 +1,5 @@
-const deletedComponentPriority = 1
+var deletedComponentPriority = 1;
+
 interface DeleteOperation {
   message: string
   priority: number
@@ -52,13 +53,14 @@ function removeComponent(component: BaseNode): DeleteOperation {
 
 /* Main logic */
 
-function safeDelete(nodes: readonly BaseNode[]) {
+function safeDelete(nodes: readonly BaseNode[], onlyReportDeleted: boolean = false) {
   const messages: Array<DeleteOperation> = nodes
     .map((node) => removeComponent(node))
     .sort((x, y) => x.priority - y.priority)
+    .filter((res) => !onlyReportDeleted || res.priority == deletedComponentPriority )
 
-  if (messages.length == 0 || messages.find(res => res.priority == deletedComponentPriority) == undefined) {
-    figma.closePlugin("Nothing to delete")
+  if (messages.length == 0) {
+    figma.closePlugin("Nothing selected")
   } else if (messages.length < 4) {
     Object.values(messages).forEach(res => figma.notify(res.message))
     figma.closePlugin()
@@ -99,5 +101,5 @@ function safeDeleteSelection() {
 
 function deleteUnusedComponents() {
   console.log("deleteUnusedComponents")
-  safeDelete(figma.root.findAll((node: BaseNode) => node.type == "COMPONENT"))
+  safeDelete(figma.root.findAll((node: BaseNode) => node.type == "COMPONENT"), true)
 }

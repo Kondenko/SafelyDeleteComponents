@@ -47,12 +47,14 @@ function removeComponent(component) {
     }
 }
 /* Main logic */
-function safeDelete(nodes) {
+function safeDelete(nodes, onlyReportDeleted) {
+    if (onlyReportDeleted === void 0) { onlyReportDeleted = false; }
     var messages = nodes
         .map(function (node) { return removeComponent(node); })
-        .sort(function (x, y) { return x.priority - y.priority; });
-    if (messages.length == 0 || messages.find(function (res) { return res.priority == deletedComponentPriority; }) == undefined) {
-        figma.closePlugin("Nothing to delete");
+        .sort(function (x, y) { return x.priority - y.priority; })
+        .filter(function (res) { return !onlyReportDeleted || res.priority == deletedComponentPriority; });
+    if (messages.length == 0) {
+        figma.closePlugin("Nothing selected");
     }
     else if (messages.length < 4) {
         Object.values(messages).forEach(function (res) { return figma.notify(res.message); });
@@ -85,5 +87,5 @@ function safeDeleteSelection() {
 }
 function deleteUnusedComponents() {
     console.log("deleteUnusedComponents");
-    safeDelete(figma.root.findAll(function (node) { return node.type == "COMPONENT"; }));
+    safeDelete(figma.root.findAll(function (node) { return node.type == "COMPONENT"; }), true);
 }
