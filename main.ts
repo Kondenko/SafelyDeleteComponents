@@ -17,11 +17,8 @@ function* walkTree(node) {
 
 function isInstance(instance: SceneNode, component: SceneNode): boolean {
   try {
-    return instance && instance.type == "INSTANCE" && instance.masterComponent.id == component.id
+    return instance && instance.type == "INSTANCE" && instance.masterComponent && instance.masterComponent.id == component.id
   } catch (e) {
-    console.log("Error checking an instance:")
-    console.log(instance)
-    console.log(e)
     return false
   }
 }
@@ -100,7 +97,7 @@ function showResults(results: Array<DeleteOperation>, onlyReportDeleted: boolean
     .filter((res) => !onlyReportDeleted || res.priority == deletedComponentPriority)
 
   if (messages.length == 0) {
-    figma.notify("Nothing selected")
+    figma.closePlugin("Nothing to delete")
   } else if (messages.length < 4) {
     Object.values(messages).forEach(res => figma.notify(res.message))
     figma.closePlugin()
@@ -135,11 +132,9 @@ switch (figma.command) {
 }
 
 function safeDeleteSelection() {
-  console.log("safeDeleteSelection")
   safeDelete(figma.currentPage.selection)
 }
 
 function deleteUnusedComponents() {
-  console.log("deleteUnusedComponents")
   safeDelete(figma.root.findAll((node: BaseNode) => node.type == "COMPONENT"), true)
 }

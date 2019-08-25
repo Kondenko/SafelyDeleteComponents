@@ -71,12 +71,9 @@ function walkTree(node) {
 }
 function isInstance(instance, component) {
     try {
-        return instance && instance.type == "INSTANCE" && instance.masterComponent.id == component.id;
+        return instance && instance.type == "INSTANCE" && instance.masterComponent && instance.masterComponent.id == component.id;
     }
     catch (e) {
-        console.log("Error checking an instance:");
-        console.log(instance);
-        console.log(e);
         return false;
     }
 }
@@ -198,10 +195,8 @@ switch (figma.command) {
     }
 }
 function safeDeleteSelection() {
-    console.log("safeDeleteSelection");
     safeDelete(figma.currentPage.selection);
 }
 function deleteUnusedComponents() {
-    console.log("deleteUnusedComponents");
     safeDelete(figma.root.findAll(function (node) { return node.type == "COMPONENT"; }), true);
 }
