@@ -95,7 +95,7 @@ function hasInstances(component) {
                             return [2 /*return*/, true];
                         }
                         if (++count === 1000) {
-                            return [2 /*return*/, delay(1, find)];
+                            return [2 /*return*/, delay(50, find)];
                         }
                     }
                     return [2 /*return*/, false];
@@ -159,7 +159,10 @@ function removeComponent(component) {
 function safeDelete(nodes, onlyReportDeleted) {
     if (onlyReportDeleted === void 0) { onlyReportDeleted = false; }
     Promise.all(nodes.map(function (node) { return removeComponent(node); }))
-        .then(function (results) { return showResults(results, onlyReportDeleted); })["catch"](figma.closePlugin);
+        .then(function (results) { return showResults(results, onlyReportDeleted); })["catch"](function (err) {
+        console.log("Error checking components: " + err);
+        figma.closePlugin();
+    });
 }
 function showResults(results, onlyReportDeleted) {
     if (onlyReportDeleted === void 0) { onlyReportDeleted = false; }
@@ -175,7 +178,7 @@ function showResults(results, onlyReportDeleted) {
     }
     else {
         var text = Object.values(messages).map(function (res) { return res.message; }).join("\n\n");
-        var style = "\n    white-space:pre-wrap;\n    padding: 8px;\n    line-height: 1.5;\n    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;\n    ";
+        var style = "\n    white-space: pre-wrap;\n    padding: 8px;\n    line-height: 1.5;\n    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;\n    ";
         figma.showUI("<p style=\"" + style + "\">" + text + "</p>", { width: 500, height: 200 });
     }
 }

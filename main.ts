@@ -42,7 +42,7 @@ async function hasInstances(component: ComponentNode): Promise<boolean> {
         return true
       }
       if (++count === 1000) {
-        return delay(1, find)
+        return delay(50, find)
       }
     }
     return false
@@ -88,7 +88,10 @@ async function removeComponent(component: BaseNode): Promise<DeleteOperation> {
 function safeDelete(nodes: readonly BaseNode[], onlyReportDeleted: boolean = false) {
   Promise.all(nodes.map((node) => removeComponent(node)))
     .then((results) => showResults(results, onlyReportDeleted))
-    .catch(figma.closePlugin)
+    .catch((err) => {
+      console.log(`Error checking components: ${err}`)
+      figma.closePlugin()
+    })
 }
 
 function showResults(results: Array<DeleteOperation>, onlyReportDeleted: boolean = false) {
@@ -104,8 +107,8 @@ function showResults(results: Array<DeleteOperation>, onlyReportDeleted: boolean
   } else {
     const text = Object.values(messages).map(res => res.message).join("\n\n")
     const style =
-      `
-    white-space:pre-wrap;
+    `
+    white-space: pre-wrap;
     padding: 8px;
     line-height: 1.5;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
