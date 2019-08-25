@@ -110,7 +110,7 @@ function showResults(results: Array<DeleteOperation>, onlyReportDeleted: boolean
     line-height: 1.5;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     `
-    figma.showUI(`<p style="${style}">${text}</p>`, { width: 500, height: 200 })
+    figma.showUI(`<p style="${style}">${text}</p>`, { width: 500, height: 208 })
   }
 }
 

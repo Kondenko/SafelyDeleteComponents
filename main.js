@@ -176,7 +176,7 @@ function showResults(results, onlyReportDeleted) {
     else {
         var text = Object.values(messages).map(function (res) { return res.message; }).join("\n\n");
         var style = "\n    white-space: pre-wrap;\n    padding: 8px;\n    line-height: 1.5;\n    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;\n    ";
-        figma.showUI("<p style=\"" + style + "\">" + text + "</p>", { width: 500, height: 200 });
+        figma.showUI("<p style=\"" + style + "\">" + text + "</p>", { width: 500, height: 208 });
     }
 }
 /* Commands */
