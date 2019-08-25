@@ -57,7 +57,7 @@ async function removeComponent(component: BaseNode): Promise<DeleteOperation> {
       if (shouldBeKept === false) {
         component.remove()
         return {
-          message: `🗑${messageTextPadding}${name} deleted`,
+          message: `🗑${messageTextPadding}${name} has been deleted`,
           priority: deletedComponentPriority
         }
       } else {

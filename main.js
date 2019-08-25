@@ -127,7 +127,7 @@ function removeComponent(component) {
                     if (shouldBeKept === false) {
                         component.remove();
                         return [2 /*return*/, {
-                                message: "\uD83D\uDDD1" + messageTextPadding + name_1 + " deleted",
+                                message: "\uD83D\uDDD1" + messageTextPadding + name_1 + " has been deleted",
                                 priority: deletedComponentPriority
                             }];
                     }
