@@ -167,7 +167,7 @@ function showResults(results, onlyReportDeleted) {
         .sort(function (x, y) { return x.priority - y.priority; })
         .filter(function (res) { return !onlyReportDeleted || res.priority == deletedComponentPriority; });
     if (messages.length == 0) {
-        figma.notify("Nothing selected");
+        figma.closePlugin("Nothing to delete");
     }
     else if (messages.length < 4) {
         Object.values(messages).forEach(function (res) { return figma.notify(res.message); });
